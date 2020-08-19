@@ -8,33 +8,32 @@ public class Alist implements IList {
     int[] values;
     int size;
 
-
-
     public Alist() {
         values = new int[10];
         size = 0;
     }
 
     public Alist(int capacity) {
-        int length = capacity + (capacity * 2 / 3);
-        if (length < 10) {
+        int length;
+        if (capacity <= 10) {
             length = 10;
+        }else {
+            length = capacity + (capacity * 2 / 3);
         }
-        
+
         this.values = new int[length];
         size = capacity;
     }
 
     public Alist(int[] values) {
-
-        int length = values.length + (values.length * 2 / 3);
-        if (length < 10) {
-            length = 10;
-        }
-
-        this.values = new int[length];
-        for (int i = 0; i < values.length; i++) {
-            this.values[i] = values[i];
+        if (values.length <= 10) {
+            this.values = values;
+        }else {
+            int   length = values.length  + (values.length  * 2 / 3);
+            this.values = new int[length];
+            for (int i = 0; i < values.length; i++) {
+                this.values[i] = values[i];
+            }
         }
         size = values.length;
     }
