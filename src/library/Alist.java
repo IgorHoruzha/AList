@@ -163,7 +163,7 @@ public class Alist implements IList{
 
     @Override
     public boolean removeAll() {
-        values= new int[10];
+        values= new int[0];
         return true;
     }
 }
