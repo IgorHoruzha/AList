@@ -133,7 +133,7 @@ public class Alist implements IList {
 
     @Override
     public int removeByIndex(int index) {
-        if (index > values.length - 1) {
+        if (index > size - 1) {
             return 0;
         }
 
