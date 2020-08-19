@@ -3,30 +3,43 @@ package library;
 import javax.swing.plaf.TreeUI;
 import java.util.Arrays;
 
-public class Alist implements IList{
+public class Alist implements IList {
 
     int[] values;
+    int size;
 
     public Alist() {
-        values= new int[10];
+        values = new int[10];
+        size = 0;
     }
 
     public Alist(int capacity) {
-        this.values = new int[capacity];
+        this.values = new int[capacity + (capacity * 2 / 3)];
+        size = capacity;
     }
 
     public Alist(int[] values) {
-        this.values = values;
+
+        int length = values.length + (values.length * 2 / 3);
+        if (length < 10) {
+            length = 10;
+        }
+
+        this.values = new int[length];
+        for (int i = 0; i < values.length; i++) {
+            this.values[i] = values[i];
+        }
+        size = values.length;
     }
 
     @Override
     public void clear() {
-        values= new int[10];
+        size = 0;
     }
 
     @Override
     public int size() {
-        return values.length;
+        return size;
     }
 
     @Override
@@ -36,101 +49,118 @@ public class Alist implements IList{
 
     @Override
     public boolean add(int value) {
+        if (size == values.length) {
+            int[] tmpArr = new int[values.length + (values.length * 2 / 3)];
 
-        int[] tmpArr= new int[values.length+1];
-
-        for (int i=0;i<values.length;i++){
-            tmpArr[i]=values[i];
+            for (int i = 0; i < size; i++) {
+                tmpArr[i] = values[i];
+            }
+            values = tmpArr;
         }
 
-        tmpArr[values.length+1]=value;
-        values=tmpArr;
+        values[size++] = value;
+
         return true;
     }
 
     @Override
     public boolean add(int index, int value) {
-        if (index>values.length){
-            return  false;
-        }
-
-        if (index<0){
+        if (index < 0) {
             return false;
         }
-        int[] tmpArr= new int[values.length+1];
 
-        for (int i=0;i<index;i++){
-            tmpArr[i] = values[i];
-        }
+        int[] tmpArr;
+        if (index >= values.length) {
+            int maxLength= index + 1;
+            int newLength =  maxLength+ (maxLength * 2 / 3);
 
-        tmpArr[index] = value;
-
-        for (int i=index;i<values.length;i++){
+            tmpArr = new int[newLength];
+            for (int i = 0; i < size; i++) {
                 tmpArr[i] = values[i];
+            }
+            tmpArr[index] = value;
+
+            size = index + 1;
+        } else if (index > size) {
+
+            tmpArr = new int[values.length];
+            for (int i = 0; i < size; i++) {
+                tmpArr[i] = values[i];
+            }
+
+            tmpArr[index] = value;
+
+            size = index + 1;
+        } else {
+            tmpArr = new int[values.length];
+
+            for (int i = 0; i < index; i++) {
+                tmpArr[i] = values[i];
+            }
+
+            tmpArr[index] = value;
+            ++size;
+            int continueIndex = index == 0 ? 1 : index + 1;
+            for (int i = continueIndex; i < size; i++) {
+                tmpArr[i] = values[i - 1];
+            }
         }
-        values=tmpArr;
+        values = tmpArr;
+
         return true;
     }
 
     @Override
     public int remove(int number) {
-        int countRemoved=0;
-        int[] tmpArr= new int[values.length];
+        int countRemoved = 0;
+        int[] tmpArr = new int[values.length];
 
-        for (int i=0, j=0;i<values.length;i++){
-            int currentNumber= values[i];
-            if (currentNumber==number){
+        int oldSize = size;
+        for (int i = 0, j = 0; i < oldSize; i++) {
+            int currentNumber = values[i];
+            if (currentNumber == number) {
                 countRemoved++;
+                size--;
                 continue;
             }
 
-            tmpArr[i] = values[j++];
+            tmpArr[j++] = values[i];
         }
 
-        if (countRemoved==0){
-            return  0;
-        }
-
-        int newSize=values.length-countRemoved;
-        int[] tmpArr1 = new int[newSize];
-
-        for (int i=0;i<newSize;i++){
-            tmpArr1[i]=tmpArr[i];
-        }
-
-        values= tmpArr1;
+        values = tmpArr;
         return countRemoved;
     }
 
     @Override
     public int removeByIndex(int index) {
-        if (index>values.length-1){
-            return  0;
-        }
-
-        if (index<0){
+        if (index > values.length - 1) {
             return 0;
         }
-        int[] tmpArr= new int[values.length-1];
 
-        for (int i=0;i<index;i++){
+        if (index < 0) {
+            return 0;
+        }
+        int[] tmpArr = new int[values.length];
+
+        for (int i = 0; i < index; i++) {
             tmpArr[i] = values[i];
         }
 
-        for (int i=index+1;i<values.length;i++){
-            tmpArr[i] = values[i-1];
+        for (int i = index + 1; i < size; i++) {
+            tmpArr[i - 1] = values[i];
         }
 
-        values=tmpArr;
+        size--;
+        values = tmpArr;
 
         return 1;
     }
 
     @Override
     public boolean contains(int value) {
-        for(int i=0;i< values.length;i++){
-            if (values[i]==value){
-                return  true;
+        for (int i = 0; i < size; i++) {
+            if (values[i] == value) {
+                return true;
             }
         }
         return false;
@@ -138,22 +168,29 @@ public class Alist implements IList{
 
     @Override
     public boolean set(int index, int value) {
-        if (index>values.length-1){
-            return  false;
-        }
-
-        if (index<0){
+        if (index > size - 1) {
             return false;
         }
 
-        values[index]=value;
+        if (index < 0) {
+            return false;
+        }
+
+        values[index] = value;
 
         return true;
     }
 
     @Override
     public void print() {
-        System.out.println(Arrays.toString(values));
+        System.out.print("[");
+        for (int i = 0; i < size; i++) {
+            System.out.print(values[i]);
+            if (i + 1 < size) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
     }
 
     @Override
@@ -162,8 +199,30 @@ public class Alist implements IList{
     }
 
     @Override
-    public boolean removeAll() {
-        values= new int[0];
+    public boolean removeAll(int[] arr) {
+
+        int[] tmpArr = new int[values.length];
+
+        int oldSize = size;
+        for (int i = 0, j = 0; i < oldSize; i++) {
+            int currentNumber = values[i];
+
+            goodToDelete:
+            {
+                for (int q = 0; q < arr.length; q++) {
+                    int numberToDelete = arr[q];
+
+                    if (currentNumber == numberToDelete) {
+                        size--;
+                        break goodToDelete;
+                    }
+                }
+
+                tmpArr[j++] = values[i];
+            }
+        }
+
+        values = tmpArr;
         return true;
     }
 }

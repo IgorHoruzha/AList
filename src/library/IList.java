@@ -12,6 +12,6 @@ public interface IList {
     boolean set(int index, int value);
     void print();
     int[] toArray();
-    boolean removeAll();
+    boolean removeAll(int[] arr);
 
 }
