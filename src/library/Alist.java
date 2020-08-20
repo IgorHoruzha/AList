@@ -8,8 +8,6 @@ public class Alist implements IList {
     int[] values;
     int size;
 
-
-
     public Alist() {
         values = new int[10];
         size = 0;
@@ -21,6 +19,8 @@ public class Alist implements IList {
         if (length < 10) {
 
             length = 10;
+        }else {
+            length = capacity + (capacity * 2 / 3);
         }
         
         this.values = new int[length];
