@@ -17,7 +17,6 @@ public class Alist implements IList {
 
         int length = capacity + (capacity * 2 / 3);
         if (length < 10) {
-
             length = 10;
         }
         
@@ -203,7 +202,14 @@ public class Alist implements IList {
 
     @Override
     public int[] toArray() {
-        return values;
+        int[] tmpArr = new int[size];
+
+        for (int i=0;i<size;i++){
+
+            tmpArr[i]=values[i];
+        }
+
+        return tmpArr;
     }
 
     @Override
