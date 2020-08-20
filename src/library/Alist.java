@@ -16,12 +16,15 @@ public class Alist implements IList {
     }
 
     public Alist(int capacity) {
+
         int length = capacity + (capacity * 2 / 3);
         if (length < 10) {
+
             length = 10;
         }
         
         this.values = new int[length];
+
         size = capacity;
     }
 
