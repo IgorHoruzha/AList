@@ -14,6 +14,7 @@ public class Alist implements IList {
     }
 
     public Alist(int capacity) {
+
         int length;
         if (capacity <= 10) {
             length = 10;
@@ -22,6 +23,7 @@ public class Alist implements IList {
         }
 
         this.values = new int[length];
+
         size = capacity;
     }
 
